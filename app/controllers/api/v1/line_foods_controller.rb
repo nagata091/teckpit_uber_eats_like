@@ -1,5 +1,5 @@
 class Api::V1::LineFoodsController < ApplicationController
-  before_action :set_food, only: %i[create]
+  before_action :set_food, only: %i[create replace]
 
   # 仮注文を作成するメソッド
   def create
@@ -51,6 +51,24 @@ class Api::V1::LineFoodsController < ApplicationController
   # 仮注文の際の例外パターンを処理する
   # 店舗Aで仮注文した状態で店舗Bで仮注文した場合に、前者は削除して後者の仮注文を作成するようにする
   def replace
+    # 他店舗の仮注文の一覧を取得する
+    LineFood.active.other_restaurant(@ordered_food.restaurant.id).each do |line_food|
+      # activeをfalseに更新することで、仮注文を削除する
+      line_food.update_attribute(:active, false)
+    end
+
+    # 仮注文を作成する
+    set_line_food(@ordered_food)
+
+    # 仮注文の保存に成功した場合は、仮注文の情報を返す
+    if @line_food.save
+      render json: {
+        line_food: @line_food
+      }, status: :created
+    # 仮注文の保存に失敗した場合は、エラーを返す
+    else
+      render json: {}, status: :internal_server_error
+    end
   end
 
 
