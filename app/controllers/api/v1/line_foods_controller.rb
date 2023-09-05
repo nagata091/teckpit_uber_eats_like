@@ -27,6 +27,25 @@ class Api::V1::LineFoodsController < ApplicationController
 
   # 仮注文の一覧を表示する
   def index
+    # 仮注文の一覧を取得する
+    line_foods = LineFood.active
+
+    # 仮注文が存在する場合は、仮注文の情報を返す
+    if line_foods.exists?
+      render json: {
+        # mapメソッドで、line_foodsのidを配列で取得し、line_food_idsとして返す
+        line_food_ids: line_foods.map { |line_food| line_food.id },
+        # 仮注文したレストランを取得する
+        restaurant: line_foods[0].restaurant,
+        # 仮注文の合計注文数を返す
+        count: line_foods.sum { |line_food| line_food.count },
+        # 仮注文の合計金額を返す
+        amount: line_foods.sum { |line_food| line_food.total_amount },
+      }, status: :ok
+    # 仮注文が存在しない場合は、空の情報を返す
+    else
+      render json: {}, status: :no_content
+    end
   end
 
   # 仮注文の際の例外パターンを処理する
