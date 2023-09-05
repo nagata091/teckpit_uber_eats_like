@@ -1,24 +1,7 @@
-# README
+# これはなに？
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[この教材](https://www.techpit.jp/courses/138/curriculums/141/sections/1046/parts/4139)をやったときのリポジトリです。
 
-Things you may want to cover:
+## メモ
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- 
