@@ -25,8 +25,12 @@ function App() {
         <Route
           exact
           path="/restaurants/:restaurantsId/foods"
-          render = {({ match }) =>
-            <Foods match={ match } />
+          // propsの中にmatchを入れて、Foodsコンポーネントに渡す
+          // matchには、URLの情報が入っている
+          render = {(props) =>
+            <Foods
+              match={ props.match }
+            />
           }
         />
 
