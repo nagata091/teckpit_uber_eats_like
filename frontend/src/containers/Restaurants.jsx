@@ -64,9 +64,11 @@ export const Restaurants = () => {
             <Fragment>
               {/* マテリアルUIのSkeletonコンポーネント */}
               {/* ロード中のアイテムをいい感じに表示してくれる */}
-              <Skeleton variant="rect" width={450} height={300} />
-              <Skeleton variant="rect" width={450} height={300} />
-              <Skeleton variant="rect" width={450} height={300} />
+              {
+                [...Array(3).keys()].map(i =>
+                  <Skeleton key={i} variant="rect" width={450} height={300} />
+                )
+              }
             </Fragment>
           :
             state.restaurantsList.map(restaurant =>
