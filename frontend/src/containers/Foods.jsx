@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useReducer } from 'react';
+import React, { Fragment, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ import { COLORS } from '../style_constants';
 import { LocalMallIcon } from '../components/Icons';
 import { FoodWrapper } from '../components/FoodWrapper';
 import { Skeleton } from '@material-ui/lab';
+import { FoodModal } from '../components/FoodModal';
 
 // images
 import MainLogo from '../images/logo.png';
@@ -41,6 +42,14 @@ export const Foods = ({match}) => {
       )
       .catch((e) => console.error(e))
   }, [match.params.restaurantsId]);
+
+  const initialState = {
+    isOpenModal: false,
+    selectedFood: null,
+    selectedFoodCount: 1
+  };
+
+  const [state, setState] = useState(initialState);
 
   return (
     <Fragment>
@@ -71,13 +80,31 @@ export const Foods = ({match}) => {
               <ItemWrapper key={food.id}>
                 <FoodWrapper
                   food={food}
-                  onClickFoodWrapper={(food) => console.log(food)}
+                  // フードをクリック時にsetStateでisOpenModalをtrueにする
+                  onClickFoodWrapper={(food) => setState({
+                    ...state,
+                    isOpenModal: true,
+                    selectedFood: food
+                  })}
                   imageUrl={FoodImage}
                 />
               </ItemWrapper>
             )
         }
       </FoodsList>
+      {/* フードをクリックした時に表示するモーダル */}
+      {  // state.isOpenModalがtrueの時に&&の後を実行する
+        state.isOpenModal &&
+        <FoodModal
+          food={state.selectedFood}
+          isOpen={state.isOpenModal}
+          // モーダルを閉じる時にsetStateでisOpenModalをfalseにする
+          onClose={() => setState({
+            ...state,
+            isOpenModal: false
+          })}
+        />
+      }
     </Fragment>
     )
 }
