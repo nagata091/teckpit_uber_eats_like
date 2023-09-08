@@ -8,6 +8,7 @@ import { fetchRestaurants } from "../apis/restaurants";
 import MainLogo from '../images/logo.png';
 import MainCoverImage from '../images/main-cover-image.png';
 
+// styled-components
 const HeaderWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
