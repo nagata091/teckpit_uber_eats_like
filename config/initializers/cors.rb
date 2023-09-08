@@ -5,6 +5,8 @@
 
 # Read more: https://github.com/cyu/rack-cors
 
+# 'rack-cors'というgemを使って、CORSを許可する
+# CORSを許可するとは、異なるオリジン(URL)間でリソースの共有を許可するということ
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     # どのオリジンからのリクエストを許可するか(正規表現でも設定できる)
