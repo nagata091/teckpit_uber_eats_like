@@ -1,24 +1,49 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useReducer } from 'react';
 
 // apisコンポーネント
 import { fetchFoods } from '../apis/foods';
 
-export const Foods = (props) => {
+// reducersコンポーネント
+import {
+  // asを使って、initialStateをfoodsInitialStateという名前で使えるようにする
+  initialState as foodsInitialState,
+  foodsActionTypes,
+  foodsReducer
+} from '../reducers/foods';
+
+// constantsコンポーネント
+import { REQUEST_STATE } from '../constants';
+
+
+export const Foods = ({match}) => {
+  const [foodsState, dispatch] = useReducer(foodsReducer, foodsInitialState);
 
   useEffect(() => {
-    fetchFoods(props.match.params.restaurantsId)
+    dispatch({ type: foodsActionTypes.FETCHING });
+    fetchFoods(match.params.restaurantsId)
       .then((data) =>
-        console.log(data)
+        dispatch({
+          type: foodsActionTypes.FETCH_SUCCESS,
+          payload: { foods: data.foods }
+        })
       )
-  }, [])
+      .catch((e) => console.error(e))
+  }, [match.params.restaurantsId])
 
   return (
     <Fragment>
-      フード一覧
-      <p>
-        {/* 親コンポーネント(App.js)から渡されたprops.matchの中から、レストランIDを取り出す */}
-        レストランIDは { props.match.params.restaurantsId } です
-      </p>
+      {
+        foodsState.fetchState === REQUEST_STATE.LOADING ?
+          <Fragment>
+            <p>ロード中...</p>
+          </Fragment>
+        :
+          foodsState.foodsList.map(food =>
+            <div key={food.id}>
+              {food.name}
+            </div>
+          )
+      }
     </Fragment>
     )
 }
