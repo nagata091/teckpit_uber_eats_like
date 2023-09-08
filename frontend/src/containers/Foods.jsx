@@ -27,6 +27,9 @@ import { FoodModal } from '../components/FoodModal';
 import MainLogo from '../images/logo.png';
 import FoodImage from '../images/food-image.jpg';
 
+const submitOrder = (message) => {
+  alert(message);
+}
 
 export const Foods = ({match}) => {
   const [foodsState, dispatch] = useReducer(foodsReducer, foodsInitialState);
@@ -98,10 +101,34 @@ export const Foods = ({match}) => {
         <FoodModal
           food={state.selectedFood}
           isOpen={state.isOpenModal}
-          // モーダルを閉じる時にsetStateでisOpenModalをfalseにする
+          countNumber={state.selectedFoodCount}
+          onClickCountUp={() => setState({
+            ...state,
+            selectedFoodCount: state.selectedFoodCount + 1
+          })}
+          onClickCountDown={() => setState({
+            ...state,
+            selectedFoodCount: state.selectedFoodCount - 1
+          })}
+          // 注文ボタンをクリックしたらアラートを表示して初期化して閉じる
+          onClickOrder={() => {
+            submitOrder(
+              `${state.selectedFood.name} を ${state.selectedFoodCount} 点注文しました！`
+            );
+            setState({
+              ...state,
+              isOpenModal: false,
+              selectedFood: null,
+              selectedFoodCount: 1
+            });
+          }}
+
+          // モーダルを閉じる時はすべてのstateを初期化する
           onClose={() => setState({
             ...state,
-            isOpenModal: false
+            isOpenModal: false,
+            selectedFood: null,
+            selectedFoodCount: 1
           })}
         />
       }
