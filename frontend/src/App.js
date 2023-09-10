@@ -27,9 +27,9 @@ function App() {
           path="/restaurants/:restaurantsId/foods"
           // propsの中にmatchを入れて、Foodsコンポーネントに渡す
           // matchには、URLの情報が入っている
-          render = {(props) =>
+          render = {({match}) =>
             <Foods
-              match={ props.match }
+              match={ match }
             />
           }
         />
