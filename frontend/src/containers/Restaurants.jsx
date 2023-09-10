@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useReducer } from "react";
 import styled from "styled-components";
-import { Link } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
 // components
 import Skeleton from "@material-ui/lab/Skeleton";
@@ -71,17 +71,17 @@ export const Restaurants = () => {
               }
             </Fragment>
           :
-            state.restaurantsList.map(restaurant =>
+            state.restaurantsList.map(item =>
               <Link
-                to={`/restaurants/${restaurant.id}/foods`}
-                key={restaurant.id}
+                to={`/restaurants/${item.id}/foods`}
+                key={item.id}
                 styled={{ textDecoration: "none" }}
                 >
                 <RestaurantsContentWrapper>
                   <RestaurantsImageNode src={RestaurantImage} />
-                  <MainText>{restaurant.name}</MainText>
+                  <MainText>{item.name}</MainText>
                   <SubText>
-                    { `配送料：${restaurant.fee}円 ${restaurant.time_required}分` }
+                    { `配送料：${item.fee}円 ${item.time_required}分` }
                   </SubText>
                 </RestaurantsContentWrapper>
               </Link>

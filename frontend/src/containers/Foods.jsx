@@ -1,9 +1,10 @@
 import React, { Fragment, useEffect, useReducer, useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 // apisコンポーネント
 import { fetchFoods } from '../apis/foods';
+import { postLineFoods, replaceLineFoods } from '../apis/line_foods';
 
 // reducersコンポーネント
 import {
@@ -15,21 +16,20 @@ import {
 
 // constantsコンポーネント
 import { REQUEST_STATE } from '../constants';
-import { COLORS } from '../style_constants'; 
+import { COLORS } from '../style_constants';
+import { HTTP_STATUS_CODE } from '../constants';
 
 // components
 import { LocalMallIcon } from '../components/Icons';
 import { FoodWrapper } from '../components/FoodWrapper';
 import { Skeleton } from '@material-ui/lab';
 import { FoodModal } from '../components/FoodModal';
+import { NewOrderConfirmModal } from '../components/NewOrderConfirmModal';
 
 // images
 import MainLogo from '../images/logo.png';
 import FoodImage from '../images/food-image.jpg';
 
-const submitOrder = (message) => {
-  alert(message);
-}
 
 export const Foods = ({match}) => {
   const [foodsState, dispatch] = useReducer(foodsReducer, foodsInitialState);
@@ -49,10 +49,48 @@ export const Foods = ({match}) => {
   const initialState = {
     isOpenModal: false,
     selectedFood: null,
-    selectedFoodCount: 1
+    selectedFoodCount: 1,
+    isOpenNewOrderModal: false,
+    existingRestaurantName: '',
+    newRestaurantName: '',
   };
 
   const [state, setState] = useState(initialState);
+  // useHistoryは、React RouterのカスタムHooks
+  // 特定の関数の実行結果に応じてページ遷移を行う
+  const history = useHistory();
+
+  const submitOrder = () => {
+    postLineFoods({
+      foodId: state.selectedFood.id,
+      count: state.selectedFoodCount,
+    })
+      // 注文が成功したら、/ordersに遷移する
+      .then(() => history.push('/orders'))
+      // 注文が失敗した場合
+      .catch((e) => {
+        // すでに他の店舗の注文が存在しており406が返ってきた場合
+        if (e.response.status === HTTP_STATUS_CODE.NOT_ACCEPTABLE) {
+          setState({
+            ...state,
+            isOpenOrderModal: false,
+            isOpenNewOrderModal: true,
+            existingRestaurantName: e.response.data.existing_restaurant,
+            newRestaurantName: e.response.data.new_restaurant,
+          })
+        // それ以外の場合はエラーを投げる
+        } else {
+          throw e;
+        }
+      })
+  };
+
+  const replaceOrder = () => {
+    replaceLineFoods({
+      foodId: state.selectedFood.id,
+      count: state.selectedFoodCount,
+    }).then(() => history.push('/orders'))
+  };
 
   return (
     <Fragment>
@@ -96,7 +134,7 @@ export const Foods = ({match}) => {
         }
       </FoodsList>
       {/* フードをクリックした時に表示するモーダル */}
-      {  // state.isOpenModalがtrueの時に&&の後を実行する
+      {
         state.isOpenModal &&
         <FoodModal
           food={state.selectedFood}
@@ -110,19 +148,8 @@ export const Foods = ({match}) => {
             ...state,
             selectedFoodCount: state.selectedFoodCount - 1
           })}
-          // 注文ボタンをクリックしたらアラートを表示して初期化して閉じる
-          onClickOrder={() => {
-            submitOrder(
-              `${state.selectedFood.name} を ${state.selectedFoodCount} 点注文しました！`
-            );
-            setState({
-              ...state,
-              isOpenModal: false,
-              selectedFood: null,
-              selectedFoodCount: 1
-            });
-          }}
-
+          // 注文ボタンをクリックした時にsubmitOrderを実行する
+          onClickOrder={() => submitOrder()}
           // モーダルを閉じる時はすべてのstateを初期化する
           onClose={() => setState({
             ...state,
@@ -130,6 +157,17 @@ export const Foods = ({match}) => {
             selectedFood: null,
             selectedFoodCount: 1
           })}
+        />
+      }
+      {/* 他店舗の注文がすでにある時に注文ボタンを押した時に表示するモーダル */}
+      {
+        state.isOpenNewOrderModal &&
+        <NewOrderConfirmModal
+          isOpen={state.isOpenNewOrderModal}
+          onClose={() => setState({ ...state, isOpenNewOrderModal: false })}
+          existingRestaurantName={state.existingRestaurantName}
+          newRestaurantName={state.newRestaurantName}
+          onClickSubmit={() => replaceOrder()}
         />
       }
     </Fragment>
