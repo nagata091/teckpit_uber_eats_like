@@ -7,7 +7,8 @@ class Api::V1::OrdersController < ApplicationController
     order = Order.new(
       total_price: total_price(posted_line_foods),
     )
-    # 本注文の保存に成功した場合は、仮注文の情報を返す
+    binding.pry
+    # 本注文の保存に成功した場合は、空の情報を返す
     if order.save_with_update_line_foods!(posted_line_foods)
       render json: {}, status: :no_content
     # 本注文の保存に失敗した場合は、エラーを返す

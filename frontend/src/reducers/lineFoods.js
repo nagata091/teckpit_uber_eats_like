@@ -24,6 +24,7 @@ export const lineFoodsReducer = (state, action) => {
     // 仮注文データを取得完了
     case lineFoodsActionTypes.FETCH_SUCCESS:
       return {
+        ...state,
         fetchState: REQUEST_STATE.OK,
         lineFoodsSummary: action.payload.lineFoodsSummary,
       };
@@ -38,6 +39,7 @@ export const lineFoodsReducer = (state, action) => {
       return {
         ...state,
         postState: REQUEST_STATE.OK,
+        lineFoodsSummary: null,
       };
     default:
       throw new Error();
