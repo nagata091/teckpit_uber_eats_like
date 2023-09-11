@@ -7,9 +7,8 @@ export const fetchRestaurants = () => {
   // axiosで引数(今回はAPIのURL)に対してGETリクエストする
   return axios.get(restaurantsIndex)
   // thenは通信が成功したときの処理
-  .then(
-    res => {
-    return res.data
+  .then(response => {
+    return response.data
     }
   )
   // catchは通信が失敗したときの処理

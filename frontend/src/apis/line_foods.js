@@ -11,8 +11,8 @@ export const postLineFoods = (params) => {
     }
   )
   // 通信が成功したら、レスポンスのデータを返す
-  .then(res => {
-    return res.data
+  .then(response => {
+    return response.data
   })
   // 通信が失敗したら、エラーを投げる
   // 失敗するときは他店舗の注文が既にある時で、その場合は
@@ -29,8 +29,18 @@ export const replaceLineFoods = (params) => {
       count: params.count,
     }
   )
-  .then(res => {
-    return res.data
+  .then(response => {
+    return response.data
   })
+  .catch((e) => { throw e; })
+};
+
+export const fetchLineFoods = () => {
+  // lineFoodsAPIにGETリクエストを送る
+  return axios.get(lineFoods)
+  .then(response => {
+    return response.data
+  })
+  // エラー(e)はOrders.jsxでキャッチする
   .catch((e) => { throw e; })
 };

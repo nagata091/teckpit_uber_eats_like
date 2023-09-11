@@ -8,9 +8,8 @@ export const fetchFoods = (restaurantsId) => {
   // foodsIndexは、引数を与える必要がある
   return axios.get(foodsIndex(restaurantsId))
   // thenは通信が成功したときの処理
-  .then(
-    res => {
-    return res.data
+  .then(response => {
+    return response.data
     }
   )
   // catchは通信が失敗したときの処理
