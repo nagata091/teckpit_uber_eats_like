@@ -7,7 +7,6 @@ class Api::V1::OrdersController < ApplicationController
     order = Order.new(
       total_price: total_price(posted_line_foods),
     )
-    binding.pry
     # 本注文の保存に成功した場合は、空の情報を返す
     if order.save_with_update_line_foods!(posted_line_foods)
       render json: {}, status: :no_content
@@ -21,8 +20,8 @@ class Api::V1::OrdersController < ApplicationController
   private
 
   # 本注文の合計金額を計算する
-  def total_price
+  def total_price(foods)
     # 本注文の合計金額 = 仮注文の合計金額 + レストランの手数料
-    posted_line_foods.sum { |line_food| line_food.total_amount } + posted_line_foods.first.restaurant.fee
+    foods.sum { |line_food| line_food.total_amount } + foods.first.restaurant.fee
   end
 end
