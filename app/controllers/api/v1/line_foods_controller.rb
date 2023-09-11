@@ -33,14 +33,21 @@ class Api::V1::LineFoodsController < ApplicationController
     # 仮注文が存在する場合は、仮注文の情報を返す
     if line_foods.exists?
       render json: {
-        # mapメソッドで、line_foodsのidを配列で取得し、line_food_idsとして返す
-        line_food_ids: line_foods.map { |line_food| line_food.id },
-        # 仮注文したレストランを取得する
-        restaurant: line_foods[0].restaurant,
-        # 仮注文の合計注文数を返す
-        count: line_foods.sum { |line_food| line_food.count },
-        # 仮注文の合計金額を返す
-        amount: line_foods.sum { |line_food| line_food.total_amount },
+        line_food_ids = []
+        count = 0
+        amount = 0
+
+        line_foods.each do |line_food|
+          line_food_ids << line_food.id     # (1) idを参照して配列に追加する
+          count += line_food[:count]        # (2) countのデータを合算する
+          amount += line_food.total_amount  # (3) total_amountを合算する
+        end
+
+        render json: {
+          line_food_ids: line_food_ids,
+          restaurant: line_foods[0].restaurant,
+          count: count,
+          amount: amount,
       }, status: :ok
     # 仮注文が存在しない場合は、空の情報を返す
     else

@@ -55,6 +55,10 @@ export const Orders = () => {
     window.location.reload();
   };
 
+  const isExistsLineFoodsSummary = () => (
+    state.fetchState === REQUEST_STATE.OK && state.lineFoodsSummary
+  )  
+
   const orderButtonLabel = () => {
     switch (state.postState) {
       case REQUEST_STATE.LOADING:
@@ -94,7 +98,7 @@ export const Orders = () => {
           </OrderItemWrapper>
           <div>
             {
-              state.fetchState === REQUEST_STATE.OK && state.lineFoodsSummary &&
+              isExistsLineFoodsSummary() &&
                 <OrderButton
                   // ボタンを押したら、postLineFoods関数が実行して注文を実行する
                   onClick={() => postLineFoods()}
